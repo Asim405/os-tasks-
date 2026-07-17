@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Critical Section Simulator (single file)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E2A42;
+  --bg-panel-raised: #16405180;
+  --line: #2E5A78;
+  --line-bright: #4F8AAE;
+  --ink: #EAF3FA;
+  --ink-muted: #8FA9BE;
+  --accent: #E8A33D;
+  --accent-soft: #E8A33D33;
+  --accent-2: #7FD9C4;
+  --danger: #E8603D;
+  --danger-soft: #E8603D26;
+  --ok: #6FCF97;
+  --ok-soft: #6FCF9726;
+  --radius: 2px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--bg);
+  background-blend-mode: overlay, overlay, normal;
+  color: var(--ink); font-family: var(--sans); min-height: 100vh;
+}
+.header { display: flex; justify-content: space-between; align-items: flex-end; padding: 28px 40px 20px; border-bottom: 1px solid var(--line-bright); flex-wrap: wrap; gap: 10px; }
+.eyebrow { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--accent-2); margin-bottom: 6px; }
+.header h1 { margin: 0; font-size: 26px; font-weight: 700; }
+.badge { font-family: var(--mono); font-size: 11px; color: var(--ink-muted); border: 1px solid var(--line); padding: 6px 10px; border-radius: var(--radius); }
+.layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; padding: 28px 40px 60px; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+.panel { background: var(--bg-panel-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.panel-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--accent-2); text-transform: uppercase; margin-bottom: 14px; }
+.panel-title:not(:first-child) { margin-top: 26px; }
+.field { margin-bottom: 18px; }
+.field label { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em; margin-bottom: 6px; }
+input[type="number"] { width: 100%; background: #0B2438; border: 1px solid var(--line); color: var(--ink); padding: 9px 10px; border-radius: var(--radius); font-family: var(--mono); font-size: 13px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input:focus { outline: none; border-color: var(--accent-2); }
+.method-switch { display: flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.method-btn { flex: 1; background: transparent; border: none; color: var(--ink-muted); font-family: var(--mono); font-size: 11px; padding: 9px 4px; cursor: pointer; border-right: 1px solid var(--line); transition: background 0.15s, color 0.15s; }
+.method-btn:last-child { border-right: none; }
+.method-btn:hover { color: var(--ink); background: #16405190; }
+.method-btn.active { background: var(--accent-soft); color: var(--accent); }
+.hint { font-size: 12px; color: var(--ink-muted); margin: 8px 2px 0; line-height: 1.4; }
+.divider { height: 1px; background: var(--line); margin: 20px 0; }
+.btn { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; transition: all 0.15s; }
+.btn.primary { width: 100%; background: var(--accent); border-color: var(--accent); color: #17273A; font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.code-block { background: #0B2438; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; font-family: var(--mono); font-size: 11.5px; color: var(--accent-2); line-height: 1.6; white-space: pre-wrap; margin: 0; }
+.process-row { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 14px; align-items: stretch; margin-bottom: 18px; }
+@media (max-width: 720px) { .process-row { grid-template-columns: 1fr; } }
+.process-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; text-align: center; background: #0B243850; transition: border-color 0.15s, background 0.15s; }
+.process-card.active-cs { border-color: var(--ok); background: var(--ok-soft); }
+.process-card.active-wait { border-color: var(--danger); background: var(--danger-soft); }
+.process-card.active-entry { border-color: var(--accent); background: var(--accent-soft); }
+.process-title { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--ink); }
+.process-status { margin-top: 8px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-muted); min-height: 32px; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
+.shared-state { border: 1px dashed var(--line-bright); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+.shared-item { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; }
+.shared-label { color: var(--ink-muted); }
+.shared-value { color: var(--accent-2); font-weight: 600; }
+.result-bar { font-family: var(--mono); font-size: 13px; padding: 12px 16px; border-radius: var(--radius); border: 1px solid var(--line); margin-bottom: 22px; display: none; }
+.result-bar.show { display: block; }
+.result-bar.ok { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
+.result-bar.bad { border-color: var(--danger); background: var(--danger-soft); color: var(--danger); }
+.trace-log { display: flex; flex-direction: column; gap: 4px; max-height: 420px; overflow-y: auto; font-family: var(--mono); font-size: 12px; }
+.empty-state { font-family: var(--mono); font-size: 12px; color: var(--ink-muted); padding: 24px 0; text-align: center; border: 1px dashed var(--line); border-radius: var(--radius); }
+.trace-row { display: flex; gap: 10px; padding: 5px 8px; border-radius: var(--radius); border-left: 3px solid var(--line); }
+.trace-row.p0 { border-left-color: var(--accent-2); }
+.trace-row.p1 { border-left-color: var(--accent); }
+.trace-row.wait { color: var(--ink-muted); font-style: italic; }
+.trace-row.cs { background: #0B243850; }
+.trace-tag { min-width: 24px; font-weight: 600; }
+.trace-row.p0 .trace-tag { color: var(--accent-2); }
+.trace-row.p1 .trace-tag { color: var(--accent); }
+.footer { text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-muted); padding: 20px; border-top: 1px solid var(--line); letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+  <header class="header">
+    <div>
+      <span class="eyebrow">PROCESS SYNCHRONIZATION MODULE</span>
+      <h1>Critical Section Simulator</h1>
+    </div>
+    <span class="badge">single-file · runs 100% in the browser · no server needed</span>
+  </header>
+
+  <main class="layout">
+
+    <section class="panel controls">
+      <div class="panel-title">01 — Configure</div>
+
+      <div class="field">
+        <label>Synchronization mode</label>
+        <div class="method-switch" id="modeSwitch">
+          <button data-mode="race" class="method-btn active">No sync (race)</button>
+          <button data-mode="peterson" class="method-btn">Peterson's</button>
+          <button data-mode="mutex" class="method-btn">Mutex lock</button>
+          <button data-mode="spinlock" class="method-btn">Spin lock</button>
+        </div>
+        <p class="hint" id="modeHint"></p>
+      </div>
+
+      <div class="field">
+        <label>Scheduling</label>
+        <div class="method-switch" id="schedSwitch">
+          <button data-sched="alternate" class="method-btn active">Alternate</button>
+          <button data-sched="random" class="method-btn">Random</button>
+        </div>
+        <p class="hint">Alternate strictly interleaves P0/P1 one step at a time — reliably exposes the race. Random picks unpredictably, like a real scheduler.</p>
+      </div>
+
+      <div class="field">
+        <label for="iterations">Iterations per process</label>
+        <input id="iterations" type="number" min="1" max="30" value="8" />
+      </div>
+
+      <div class="field">
+        <label for="speed">Playback speed</label>
+        <input id="speed" type="range" min="20" max="500" value="140" />
+      </div>
+
+      <button id="runBtn" class="btn primary">Run simulation</button>
+
+      <div class="divider"></div>
+      <div class="panel-title">02 — Pseudocode</div>
+      <pre class="code-block" id="pseudocode"></pre>
+    </section>
+
+    <section class="panel visual">
+      <div class="panel-title">03 — Processes</div>
+      <div class="process-row">
+        <div class="process-card" id="p0card">
+          <div class="process-title">P0</div>
+          <div class="process-status" id="p0status">idle</div>
+        </div>
+        <div class="shared-state" id="sharedState">
+          <div class="shared-item"><span class="shared-label">counter</span><span class="shared-value" id="counterVal">0</span></div>
+          <div class="shared-item"><span class="shared-label">flag[0]</span><span class="shared-value" id="flag0Val">false</span></div>
+          <div class="shared-item"><span class="shared-label">flag[1]</span><span class="shared-value" id="flag1Val">false</span></div>
+          <div class="shared-item"><span class="shared-label">turn</span><span class="shared-value" id="turnVal">–</span></div>
+          <div class="shared-item"><span class="shared-label">lock</span><span class="shared-value" id="lockVal">false</span></div>
+        </div>
+        <div class="process-card" id="p1card">
+          <div class="process-title">P1</div>
+          <div class="process-status" id="p1status">idle</div>
+        </div>
+      </div>
+
+      <div class="result-bar" id="resultBar"></div>
+
+      <div class="panel-title">04 — Execution trace</div>
+      <div class="trace-log" id="traceLog">
+        <div class="empty-state">Run a simulation to see the interleaved trace.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>Critical Section · Race Condition · Peterson's Algorithm · Mutex Lock — pure client-side JS</span>
+  </footer>
+
+<script>
+/* ===================== Simulation core (same logic as backend/sync.js) ===================== */
+function snapshot(shared) {
+  return { counter: shared.counter, flag: [...shared.flag], turn: shared.turn, lock: shared.lock };
+}
+
+function* processRoutine(id, otherId, iterations, mode, shared, log) {
+  for (let i = 0; i < iterations; i++) {
+    if (mode === 'peterson') {
+      shared.flag[id] = true;
+      shared.turn = otherId;
+      log({ proc: id, type: 'entry', text: `flag[${id}] = true;  turn = ${otherId}`, state: snapshot(shared) });
+      while (shared.flag[otherId] && shared.turn === otherId) {
+        log({ proc: id, type: 'wait', text: `busy-wait: flag[${otherId}]=true AND turn=${otherId}`, state: snapshot(shared) });
+        yield;
+      }
+    } else if (mode === 'mutex') {
+      while (shared.lock) {
+        log({ proc: id, type: 'wait', text: `blocked — lock is held`, state: snapshot(shared) });
+        yield;
+      }
+      shared.lock = true;
+      log({ proc: id, type: 'entry', text: `acquire(lock) succeeded`, state: snapshot(shared) });
+    } else {
+      log({ proc: id, type: 'entry', text: `no entry protocol (unsafe!)`, state: snapshot(shared) });
+    }
+
+    const temp = shared.counter;
+    log({ proc: id, type: 'cs', text: `iter ${i + 1}: read counter (=${temp}) into local temp`, state: snapshot(shared) });
+    yield;
+    shared.counter = temp + 1;
+    log({ proc: id, type: 'cs', text: `iter ${i + 1}: write counter = temp+1 = ${shared.counter}`, state: snapshot(shared) });
+
+    if (mode === 'peterson') {
+      shared.flag[id] = false;
+      log({ proc: id, type: 'exit', text: `flag[${id}] = false`, state: snapshot(shared) });
+    } else if (mode === 'mutex') {
+      shared.lock = false;
+      log({ proc: id, type: 'exit', text: `release(lock)`, state: snapshot(shared) });
+    }
+    yield;
+  }
+}
+
+function runSimulation({ mode = 'race', iterations = 5, scheduling = 'alternate' } = {}) {
+  const shared = { counter: 0, flag: [false, false], turn: 0, lock: false };
+  const logs = [];
+  const log = (entry) => logs.push(entry);
+
+  const p0 = processRoutine(0, 1, iterations, mode, shared, log);
+  const p1 = processRoutine(1, 0, iterations, mode, shared, log);
+
+  let done0 = false, done1 = false, turnPicker = 0, steps = 0;
+  const MAX_STEPS = 20000;
+  let truncated = false;
+
+  while (!done0 || !done1) {
+    if (steps++ > MAX_STEPS) { truncated = true; break; }
+    let pick;
+    if (done0) pick = 1;
+    else if (done1) pick = 0;
+    else if (scheduling === 'random') pick = Math.random() < 0.5 ? 0 : 1;
+    else { pick = turnPicker % 2; turnPicker++; }
+
+    if (pick === 0) { const r = p0.next(); done0 = r.done; }
+    else { const r = p1.next(); done1 = r.done; }
+  }
+
+  const expected = iterations * 2;
+  return {
+    mode, iterations, scheduling,
+    finalCounter: shared.counter,
+    expectedCounter: expected,
+    lostUpdates: expected - shared.counter,
+    correct: shared.counter === expected,
+    truncated,
+    logs,
+  };
+}
+
+/* ===================== UI wiring ===================== */
+const els = {
+  modeSwitch: document.getElementById('modeSwitch'),
+  modeHint: document.getElementById('modeHint'),
+  schedSwitch: document.getElementById('schedSwitch'),
+  iterations: document.getElementById('iterations'),
+  speed: document.getElementById('speed'),
+  runBtn: document.getElementById('runBtn'),
+  pseudocode: document.getElementById('pseudocode'),
+  p0card: document.getElementById('p0card'),
+  p1card: document.getElementById('p1card'),
+  p0status: document.getElementById('p0status'),
+  p1status: document.getElementById('p1status'),
+  counterVal: document.getElementById('counterVal'),
+  flag0Val: document.getElementById('flag0Val'),
+  flag1Val: document.getElementById('flag1Val'),
+  turnVal: document.getElementById('turnVal'),
+  lockVal: document.getElementById('lockVal'),
+  resultBar: document.getElementById('resultBar'),
+  traceLog: document.getElementById('traceLog'),
+};
+
+let currentMode = 'race';
+let currentSched = 'alternate';
+
+const HINTS = {
+  race: 'No entry/exit protocol at all. Both processes read-modify-write the counter directly — updates can be lost.',
+  peterson: "Peterson's algorithm: each process sets its own flag, then yields turn to the other. It waits only if the other wants in AND it is the other's turn.",
+  mutex: 'A single shared lock. A process must acquire() the lock before entering, and release() it on exit. Only one holder at a time.',
+  spinlock: 'A spin lock is a simple lock that busy-waits until the lock becomes available, then grabs it and enters the critical section.',
+};
+
+const PSEUDOCODE = {
+  race: `// Process i (NO synchronization)
+repeat:
+    temp = counter      // read
+    counter = temp + 1  // write
+forever`,
+  peterson: `// Process i, other process j
+flag[i] = true
+turn = j
+while (flag[j] && turn == j)
+    ;  // busy-wait
+
+    // critical section
+    temp = counter
+    counter = temp + 1
+
+flag[i] = false`,
+  mutex: `// Process i
+acquire(lock):
+    while (lock)
+        ;  // busy-wait
+    lock = true
+
+    // critical section
+    temp = counter
+    counter = temp + 1
+
+release(lock):
+    lock = false`,
+  spinlock: `// Process i
+acquire(lock):
+    while (lock)
+        ;  // busy-wait
+    lock = true
+
+    // critical section
+    temp = counter
+    counter = temp + 1
+
+release(lock):
+    lock = false`,
+};
+
+function updateHintAndCode() {
+  els.modeHint.textContent = HINTS[currentMode];
+  els.pseudocode.textContent = PSEUDOCODE[currentMode];
+}
+
+[...els.modeSwitch.children].forEach((btn) => {
+  btn.addEventListener('click', () => {
+    currentMode = btn.dataset.mode;
+    [...els.modeSwitch.children].forEach((b) => b.classList.toggle('active', b === btn));
+    updateHintAndCode();
+  });
+});
+
+[...els.schedSwitch.children].forEach((btn) => {
+  btn.addEventListener('click', () => {
+    currentSched = btn.dataset.sched;
+    [...els.schedSwitch.children].forEach((b) => b.classList.toggle('active', b === btn));
+  });
+});
+
+function resetVisual() {
+  els.counterVal.textContent = '0';
+  els.flag0Val.textContent = 'false';
+  els.flag1Val.textContent = 'false';
+  els.turnVal.textContent = '–';
+  els.lockVal.textContent = 'false';
+  els.p0status.textContent = 'idle';
+  els.p1status.textContent = 'idle';
+  els.p0card.className = 'process-card';
+  els.p1card.className = 'process-card';
+  els.resultBar.className = 'result-bar';
+  els.traceLog.innerHTML = '';
+}
+
+function applyEntry(entry) {
+  const { proc, type, text, state } = entry;
+  els.counterVal.textContent = state.counter;
+  els.flag0Val.textContent = state.flag[0];
+  els.flag1Val.textContent = state.flag[1];
+  els.turnVal.textContent = state.turn;
+  els.lockVal.textContent = state.lock;
+
+  const card = proc === 0 ? els.p0card : els.p1card;
+  const status = proc === 0 ? els.p0status : els.p1status;
+  const otherCard = proc === 0 ? els.p1card : els.p0card;
+
+  card.className = 'process-card ' + (type === 'wait' ? 'active-wait' : type === 'cs' ? 'active-cs' : 'active-entry');
+  otherCard.classList.remove('active-cs', 'active-wait', 'active-entry');
+  status.textContent = text;
+
+  const row = document.createElement('div');
+  row.className = `trace-row p${proc} ${type === 'wait' ? 'wait' : ''} ${type === 'cs' ? 'cs' : ''}`;
+  row.innerHTML = `<span class="trace-tag">P${proc}</span><span>${text}</span>`;
+  els.traceLog.appendChild(row);
+  els.traceLog.scrollTop = els.traceLog.scrollHeight;
+}
+
+function playLog(logs, onDone) {
+  const speed = parseInt(els.speed.value, 10);
+  let i = 0;
+  function step() {
+    if (i >= logs.length) return onDone();
+    applyEntry(logs[i]);
+    i++;
+    setTimeout(step, speed);
+  }
+  step();
+}
+
+function modeName(m) {
+  return m === 'peterson'
+    ? "Peterson's algorithm"
+    : m === 'mutex'
+    ? 'the mutex lock'
+    : m === 'spinlock'
+    ? 'the spin lock'
+    : 'no synchronization';
+}
+
+function runAndPlay() {
+  const iterations = parseInt(els.iterations.value, 10) || 1;
+  resetVisual();
+  els.runBtn.disabled = true;
+  els.runBtn.textContent = 'Running…';
+
+  const data = runSimulation({ mode: currentMode, iterations, scheduling: currentSched });
+
+  playLog(data.logs, () => {
+    els.resultBar.classList.add('show', data.correct ? 'ok' : 'bad');
+    els.resultBar.textContent = data.correct
+      ? `✓ Final counter = ${data.finalCounter} (expected ${data.expectedCounter}). No updates lost — ${modeName(currentMode)} kept the critical section safe.`
+      : `✗ Final counter = ${data.finalCounter} (expected ${data.expectedCounter}). ${data.lostUpdates} update(s) lost to the race condition.`;
+    els.runBtn.disabled = false;
+    els.runBtn.textContent = 'Run simulation';
+  });
+}
+
+els.runBtn.addEventListener('click', runAndPlay);
+updateHintAndCode();
+</script>
+</body>
+</html>

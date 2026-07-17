@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Disk Allocation Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <span class="eyebrow">FILE SYSTEM MODULE</span>
+      <h1>Disk Allocation Console</h1>
+    </div>
+    <div class="header-right">
+      <label for="apiUrl">API base</label>
+      <input id="apiUrl" type="text" value="http://localhost:4000/api" spellcheck="false" />
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- Left: controls -->
+    <section class="panel controls">
+      <div class="panel-title">01 — Configure</div>
+
+      <div class="field">
+        <label>Allocation method</label>
+        <div class="method-switch" id="methodSwitch">
+          <button data-method="sequential" class="method-btn active">Sequential</button>
+          <button data-method="linked" class="method-btn">Linked</button>
+          <button data-method="indexed" class="method-btn">Indexed</button>
+        </div>
+        <p class="hint" id="methodHint">Files occupy one unbroken run of blocks.</p>
+      </div>
+
+      <div class="field">
+        <label for="diskSize">Disk size (blocks)</label>
+        <div class="row">
+          <input id="diskSize" type="number" min="4" max="200" value="40" />
+          <button id="resetDiskBtn" class="btn ghost">Rebuild disk</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="panel-title">02 — Create file</div>
+      <div class="field">
+        <label for="fileName">File name</label>
+        <input id="fileName" type="text" placeholder="e.g. report.txt" />
+      </div>
+      <div class="field">
+        <label for="fileBlocks">Blocks needed</label>
+        <input id="fileBlocks" type="number" min="1" value="4" />
+      </div>
+      <button id="createFileBtn" class="btn primary">Allocate file</button>
+
+      <div class="log" id="log"></div>
+    </section>
+
+    <!-- Right: disk map + file table -->
+    <section class="panel visual">
+      <div class="panel-title">03 — Disk map <span class="free-count" id="freeCount"></span></div>
+      <div class="block-info" id="blockInfo">Click any block to see its address and whether it stores a value.</div>
+      <div class="disk-grid" id="diskGrid"></div>
+
+      <div class="panel-title">04 — File table</div>
+      <div class="file-table" id="fileTable">
+        <div class="empty-state">No files allocated yet. Create one on the left.</div>
+        
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>Sequential · Linked · Indexed — Node.js / Express backend, vanilla JS frontend</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Critical Section Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <span class="eyebrow">PROCESS SYNCHRONIZATION MODULE</span>
+      <h1>Critical Section Simulator</h1>
+    </div>
+    <div class="header-right">
+      <label for="apiUrl">API base</label>
+      <input id="apiUrl" type="text" value="http://localhost:4100/api" spellcheck="false" />
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- Left: controls -->
+    <section class="panel controls">
+      <div class="panel-title">01 — Configure</div>
+
+      <div class="field">
+        <label>Synchronization mode</label>
+        <div class="method-switch" id="modeSwitch">
+          <button data-mode="race" class="method-btn active">No sync (race)</button>
+          <button data-mode="peterson" class="method-btn">Peterson's</button>
+          <button data-mode="mutex" class="method-btn">Mutex lock</button>
+          <button data-mode="spinlock" class="method-btn">Spin lock</button>
+        </div>
+        <p class="hint" id="modeHint"></p>
+      </div>
+
+      <div class="field">
+        <label>Scheduling</label>
+        <div class="method-switch" id="schedSwitch">
+          <button data-sched="alternate" class="method-btn active">Alternate</button>
+          <button data-sched="random" class="method-btn">Random</button>
+        </div>
+        <p class="hint">Alternate strictly interleaves P0/P1 one step at a time — reliably exposes the race. Random picks unpredictably, like a real scheduler.</p>
+      </div>
+
+      <div class="field">
+        <label for="iterations">Iterations per process</label>
+        <input id="iterations" type="number" min="1" max="30" value="8" />
+      </div>
+
+      <div class="field">
+        <label for="speed">Playback speed</label>
+        <input id="speed" type="range" min="20" max="500" value="140" />
+      </div>
+
+      <button id="runBtn" class="btn primary">Run simulation</button>
+
+      <div class="divider"></div>
+      <div class="panel-title">02 — Pseudocode</div>
+      <pre class="code-block" id="pseudocode"></pre>
+    </section>
+
+    <!-- Right: live visualization -->
+    <section class="panel visual">
+      <div class="panel-title">03 — Processes</div>
+      <div class="process-row">
+        <div class="process-card" id="p0card">
+          <div class="process-title">P0</div>
+          <div class="process-status" id="p0status">idle</div>
+        </div>
+        <div class="shared-state" id="sharedState">
+          <div class="shared-item"><span class="shared-label">counter</span><span class="shared-value" id="counterVal">0</span></div>
+          <div class="shared-item"><span class="shared-label">flag[0]</span><span class="shared-value" id="flag0Val">false</span></div>
+          <div class="shared-item"><span class="shared-label">flag[1]</span><span class="shared-value" id="flag1Val">false</span></div>
+          <div class="shared-item"><span class="shared-label">turn</span><span class="shared-value" id="turnVal">–</span></div>
+          <div class="shared-item"><span class="shared-label">lock</span><span class="shared-value" id="lockVal">false</span></div>
+        </div>
+        <div class="process-card" id="p1card">
+          <div class="process-title">P1</div>
+          <div class="process-status" id="p1status">idle</div>
+        </div>
+      </div>
+
+      <div class="result-bar" id="resultBar"></div>
+
+      <div class="panel-title">04 — Execution trace</div>
+      <div class="trace-log" id="traceLog">
+        <div class="empty-state">Run a simulation to see the interleaved trace.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>Critical Section · Race Condition · Peterson's Algorithm · Mutex Lock — Node.js / Express backend</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
