@@ -1,13 +1,6 @@
 /**
  * server.js
  * Express API for the File Allocation Simulator.
- *
- * Endpoints:
- *   GET    /api/state              -> current disk map + file table + method
- *   POST   /api/init      {size}   -> reset disk to given size
- *   POST   /api/method    {method} -> switch strategy ('sequential'|'linked'|'indexed')
- *   POST   /api/files     {name, blocks} -> allocate a file
- *   DELETE /api/files/:name        -> delete a file
  */
 
 const express = require('express');
@@ -52,7 +45,6 @@ app.post('/api/method', (req, res) => {
   if (!['sequential', 'linked', 'indexed'].includes(newMethod)) {
     return res.status(400).json({ ok: false, message: 'method must be sequential, linked, or indexed.' });
   }
-  // Switching method resets the disk (each method owns its own bookkeeping)
   method = newMethod;
   disk.reset(disk.size);
   strategy = createStrategy(method, disk);
@@ -74,6 +66,11 @@ app.delete('/api/files/:name', (req, res) => {
   res.status(result.ok ? 200 : 404).json({ ...result, state: currentState() });
 });
 
-app.listen(PORT, () => {
-  console.log(`File Allocation Simulator API running at http://localhost:${PORT}`);
-});
+// Vercel serverless engine compatibility
+module.exports = app;
+
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`File Allocation Simulator API running at http://localhost:${PORT}`);
+  });
+}

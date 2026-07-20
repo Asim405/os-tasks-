@@ -35,7 +35,6 @@ function logLine(message, ok = true) {
   els.log.prepend(div);
 }
 
-// Deterministic color per filename, for visually distinguishing files on the grid
 function colorForName(name) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
@@ -227,5 +226,4 @@ els.fileName.addEventListener('keydown', (e) => { if (e.key === 'Enter') createF
   btn.addEventListener('click', () => switchMethod(btn.dataset.method));
 });
 
-// Initial load
 refreshState();
