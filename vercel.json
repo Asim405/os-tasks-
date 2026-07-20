@@ -2,21 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "TASK 1 Process sceduling/server/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "functions": {
-          "TASK 1 Process sceduling/server/index.js": {
-            "runtime": "nodejs20.x"
-          }
-        }
-      }
+      "src": "task1-process-scheduling/server/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "TASK 1 Process sceduling/server/index.js"
+      "dest": "task1-process-scheduling/server/index.js"
     }
   ]
 }
