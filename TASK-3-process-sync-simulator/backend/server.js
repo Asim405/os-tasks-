@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const cors = require('cors');
 const { runSimulation } = require('./sync');
@@ -10,7 +8,8 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 4100;
 
-app.post('/api/simulate', (req, res) => {
+// 404 Fix: Removed '/api' prefix for clean standalone routing
+app.post('/simulate', (req, res) => {
   const { mode = 'race', iterations = 5, scheduling = 'alternate' } = req.body;
 
   if (!['race', 'peterson', 'mutex', 'spinlock'].includes(mode)) {
@@ -28,6 +27,11 @@ app.post('/api/simulate', (req, res) => {
   res.json({ ok: true, ...result });
 });
 
-app.listen(PORT, () => {
-  console.log(`Process Sync Simulator API running at http://localhost:${PORT}`);
-});
+// Vercel serverless engine compatibility
+module.exports = app;
+
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Process Sync Simulator API running at http://localhost:${PORT}`);
+  });
+}
