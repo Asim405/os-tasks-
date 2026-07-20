@@ -26,11 +26,12 @@ function currentState() {
   };
 }
 
-app.get('/api/state', (req, res) => {
+// 404 Fix: Removed '/api' prefix to match frontend paths directly
+app.get('/state', (req, res) => {
   res.json(currentState());
 });
 
-app.post('/api/init', (req, res) => {
+app.post('/init', (req, res) => {
   const size = parseInt(req.body.size, 10);
   if (!Number.isInteger(size) || size < 1 || size > 500) {
     return res.status(400).json({ ok: false, message: 'size must be an integer between 1 and 500.' });
@@ -40,7 +41,7 @@ app.post('/api/init', (req, res) => {
   res.json({ ok: true, message: `Disk reset to ${size} blocks.`, state: currentState() });
 });
 
-app.post('/api/method', (req, res) => {
+app.post('/method', (req, res) => {
   const { method: newMethod } = req.body;
   if (!['sequential', 'linked', 'indexed'].includes(newMethod)) {
     return res.status(400).json({ ok: false, message: 'method must be sequential, linked, or indexed.' });
@@ -51,7 +52,7 @@ app.post('/api/method', (req, res) => {
   res.json({ ok: true, message: `Switched to ${method} allocation. Disk cleared.`, state: currentState() });
 });
 
-app.post('/api/files', (req, res) => {
+app.post('/files', (req, res) => {
   const { name, blocks } = req.body;
   const numBlocks = parseInt(blocks, 10);
   if (!name || typeof name !== 'string' || !Number.isInteger(numBlocks) || numBlocks <= 0) {
@@ -61,7 +62,7 @@ app.post('/api/files', (req, res) => {
   res.status(result.ok ? 200 : 409).json({ ...result, state: currentState() });
 });
 
-app.delete('/api/files/:name', (req, res) => {
+app.delete('/files/:name', (req, res) => {
   const result = strategy.delete(req.params.name);
   res.status(result.ok ? 200 : 404).json({ ...result, state: currentState() });
 });
