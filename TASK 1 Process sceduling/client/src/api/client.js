@@ -1,5 +1,4 @@
-const API_BASE = "/api";
-
+const API_BASE = "https://os-tasks.vercel.app/api";
 export async function fetchAlgorithms() {
   const res = await fetch(`${API_BASE}/algorithms`);
   if (!res.ok) throw new Error("Failed to fetch algorithms");
