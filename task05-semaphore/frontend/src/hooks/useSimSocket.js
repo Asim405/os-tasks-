@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:4000/ws";
+const WS_URL = import.meta.env.VITE_WS_URL || "wss://os-tasks-5dse.vercel.app/ws";
 
 export function useSimSocket() {
   const [state, setState] = useState(null);
