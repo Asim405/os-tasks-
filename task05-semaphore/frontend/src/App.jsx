@@ -62,7 +62,7 @@ export default function App() {
 
       {!connected && (
         <div className="connect-notice">
-          Waiting for the backend at <code>{import.meta.env.VITE_WS_URL || "wss://os-tasks-5dse.vercel.app/ws"}</code>.
+          Waiting for the backend at <code>{import.meta.env.VITE_WS_URL || "wss://os-tasks-1.onrender.com/ws"}</code>.
           Start the server in <code>/backend</code> with <code>npm start</code>.
         </div>
       )}
