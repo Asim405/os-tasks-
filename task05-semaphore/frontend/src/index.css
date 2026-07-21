@@ -1,0 +1,62 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  --void: #12161c;
+  --panel: #1b222b;
+  --panel-raised: #212a34;
+  --rail: #364150;
+  --rail-dim: #2a323d;
+  --bone: #ece7db;
+  --dim: #8d99a8;
+  --amber: #e8a33d;
+  --amber-dim: #6b5327;
+  --green: #4fb477;
+  --green-dim: #2c5138;
+  --red: #d6524a;
+  --red-dim: #5a2c29;
+
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--void);
+  color: var(--bone);
+  font-family: var(--font-body);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: var(--amber-dim);
+  color: var(--bone);
+}
+
+a {
+  color: var(--amber);
+}
+
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
