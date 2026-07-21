@@ -4,7 +4,7 @@ import ControlPanel from './components/ControlPanel.jsx';
 import ProcessTimeline from './components/ProcessTimeline.jsx';
 import EventLog from './components/EventLog.jsx';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://os-tasks-whmi.vercel.app/';
 const MAX_PLAYBACK_MS = 5000;
 
 export default function App() {
