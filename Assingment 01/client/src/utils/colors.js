@@ -1,14 +1,14 @@
 export const PROCESS_COLORS = [
-  "#6366f1",
-  "#781245",
-  "#166c62",
-  "#69460a",
-  "#4f09f3",
-  "#f31414",
-  "#7cc6d3",
-  "#84cc16",
-  "#f0a672",
-  "#00deee",
+  "#00d4ff",
+  "#0284c7",
+  "#00e5ff",
+  "#06b6d4",
+  "#0ea5e9",
+  "#0284c7",
+  "#00c9ff",
+  "#0096d6",
+  "#00b0ff",
+  "#00e1ff",
 ];
 
 export function getProcessColor(processId, allIds) {
@@ -17,8 +17,8 @@ export function getProcessColor(processId, allIds) {
 }
 
 export const ALGORITHM_COLORS = {
-  fcfs: { bg: "#dbeafe", text: "#1d4ed8", border: "#93c5fd" },
-  sjf: { bg: "#dcfce7", text: "#15803d", border: "#86efac" },
-  priority: { bg: "#fce7f3", text: "#be185d", border: "#f9a8d4" },
-  roundRobin: { bg: "#fef3c7", text: "#b45309", border: "#fcd34d" },
+  fcfs: { bg: "#cffafe", text: "#0c4a6e", border: "#06b6d4" },
+  sjf: { bg: "#e0f2fe", text: "#0369a1", border: "#0284c7" },
+  priority: { bg: "#d1f5ff", text: "#0e5a84", border: "#00d4ff" },
+  roundRobin: { bg: "#cffafe", text: "#0c4a6e", border: "#0ea5e9" },
 };
