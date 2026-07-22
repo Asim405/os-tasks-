@@ -60,3 +60,129 @@ input:focus-visible,
   outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablet & Medium Screens (1024px and below) */
+@media (max-width: 1024px) {
+  :root {
+    font-size: 14px;
+  }
+
+  html, body {
+    padding: 0;
+  }
+}
+
+/* Large Tablet (768px and below) */
+@media (max-width: 768px) {
+  :root {
+    font-size: 13px;
+  }
+
+  html, body {
+    font-size: 13px;
+  }
+
+  button, input, select {
+    font-size: 13px;
+    padding: 0.6em 1em;
+  }
+
+  button {
+    min-height: 44px;
+  }
+}
+
+/* Mobile Phones (640px and below) */
+@media (max-width: 640px) {
+  :root {
+    font-size: 12px;
+  }
+
+  html, body {
+    font-size: 12px;
+    padding: 0;
+  }
+
+  button, input, select, textarea {
+    font-size: 16px;
+    min-height: 44px;
+    padding: 0.6em;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 0.5em;
+  }
+
+  input, select, textarea {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Remove horizontal scrolling */
+  * {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  :root {
+    font-size: 11px;
+  }
+
+  html, body {
+    font-size: 11px;
+  }
+
+  body {
+    line-height: 1.5;
+  }
+
+  button, input, select, textarea {
+    font-size: 16px;
+    min-height: 44px;
+    padding: 0.5em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0.5em 0;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 0.5em 0;
+  }
+
+  button {
+    padding: 0.8em 1em;
+  }
+}
+
+/* Extra Small Mobile (320px and below) */
+@media (max-width: 320px) {
+  :root {
+    font-size: 10px;
+  }
+
+  html, body {
+    font-size: 10px;
+  }
+
+  button, input, select, textarea {
+    font-size: 14px;
+    min-height: 40px;
+    padding: 0.4em;
+  }
+}

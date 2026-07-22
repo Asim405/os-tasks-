@@ -460,14 +460,30 @@ tbody tr:hover {
   border-top: 1px solid var(--border);
 }
 
-/* Responsive */
+/* Responsive Design */
+
+/* Tablet & Medium Screens (1024px and below) */
 @media (max-width: 1024px) {
   .main {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .header-content {
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
   }
 }
 
-@media (max-width: 640px) {
+/* Large Phone & Small Tablet (768px and below) */
+@media (max-width: 768px) {
+  :root {
+    --radius: 10px;
+  }
+
   .header {
     padding: 1.25rem 1rem;
   }
@@ -475,32 +491,54 @@ tbody tr:hover {
   .header-content {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .header-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-text p {
+    font-size: 0.85rem;
   }
 
   .header-actions {
-    justify-content: stretch;
+    flex-direction: column;
   }
 
   .header-actions .btn {
-    flex: 1;
+    width: 100%;
   }
 
   .main {
     padding: 1rem;
+    gap: 1rem;
   }
 
   .algorithm-grid {
     grid-template-columns: 1fr;
   }
 
+  .quantum-input {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .quantum-input input {
+    width: 100%;
+  }
+
   .process-row,
   .process-row:has(.form-group:nth-child(4)) {
     grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
 
   .process-row .btn-icon {
     grid-column: span 2;
     justify-self: end;
+    width: 36px;
+    height: 36px;
   }
 
   .summary-grid {
@@ -508,6 +546,231 @@ tbody tr:hover {
   }
 
   .card {
-    padding: 1.25rem;
+    padding: 1rem;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+  }
+
+  table {
+    font-size: 0.8rem;
+  }
+
+  thead th {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  tbody td {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Mobile Phones (640px and below) */
+@media (max-width: 640px) {
+  :root {
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .header {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .header-text h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-text p {
+    font-size: 0.8rem;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .main {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .card h2 {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .algorithm-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .algorithm-btn {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .algo-short {
+    font-size: 0.7rem;
+  }
+
+  .algo-name {
+    font-size: 0.8rem;
+  }
+
+  .process-row,
+  .process-row:has(.form-group:nth-child(4)) {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .process-row .btn-icon {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .form-group label {
+    font-size: 0.7rem;
+  }
+
+  input {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .summary-item {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .summary-label {
+    font-size: 0.7rem;
+  }
+
+  .summary-value {
+    font-size: 1rem;
+  }
+
+  .gantt-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    font-size: 0.75rem;
+  }
+
+  thead th {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  tbody td {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .process-id {
+    font-size: 0.8rem;
+  }
+
+  .footer {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  :root {
+    --radius: 8px;
+  }
+
+  .header-text h1 {
+    font-size: 1.1rem;
+  }
+
+  .header-text p {
+    font-size: 0.75rem;
+  }
+
+  .btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+  }
+
+  .main {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 0.5rem;
+  }
+
+  .card h2 {
+    font-size: 0.9rem;
+  }
+
+  .algorithm-btn {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .process-row {
+    padding: 0.5rem;
+  }
+
+  .form-group {
+    gap: 0.2rem;
+  }
+
+  input {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .summary-item {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .summary-value {
+    font-size: 0.95rem;
+  }
+
+  table {
+    font-size: 0.7rem;
+  }
+
+  thead th {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.6rem;
+  }
+
+  tbody td {
+    padding: 0.3rem 0.4rem;
   }
 }
