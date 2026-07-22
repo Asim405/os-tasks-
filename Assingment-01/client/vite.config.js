@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": "https://os-tasks.vercel.app",
+      "/api": "https://os-tasks-1-6yo3.onrender.com",
     },
   },
 });
